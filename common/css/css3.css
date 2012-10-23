@@ -1,0 +1,177 @@
+
+#main-menu a{-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+border-radius: 4px;
+behavior: url("PIE.htc");}
+.read-more{-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+border-radius: 4px;}
+#chapter-nav a{-webkit-border-radius: 50%;
+-moz-border-radius: 50%;
+border-radius: 50%;
+behavior: url("PIE.htc");}
+#news-bar{-webkit-border-top-left-radius: 0;
+-webkit-border-top-right-radius: 0;
+-webkit-border-bottom-left-radius: 4px;
+-webkit-border-bottom-right-radius: 4px;
+-moz-border-radius: 0 0 4px 4px;
+border-radius: 0 0 4px 4px;
+behavior: url("PIE.htc");}
+#main-menu a:hover, #main-menu li.active a{text-shadow: 0px 1px 1px #4d781b;}
+#news-bar a, #news-bar span{text-shadow: 0px 1px 1px #9397a0;}
+
+
+.read-more{*display:inline;}
+
+
+
+/********************/
+@media only screen and (max-width: 1024px) {
+    
+}
+
+/* Style adjustments for IPAD Portrate */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+
+}
+
+/*Tablet Layout: 768px.*/
+ /* Style adjustments for IPAD Portate and Iphone */
+@media only screen and (max-width: 991px) {
+	.layout{width:700px;}
+	li.sequence img{margin-right:0px !important; width:110%; position:relative; margin-left:40px; right:-62px;}
+	.right-content li.sequence img{margin-right:0px !important; margin-left:34px !important; right:0}
+	.text-content{width:240px;margin-left:-350px;top:105px;}
+	.right-content .text-content{margin-left:109px !important;}
+	.heading-1{font-size:24px;}
+	.heading-2{font-size:20px;}
+	.icons li{font-size:11px; line-height:13px;}
+	.map-block{margin:110px 30px 0 0}
+	.right-content .text-content{width:250px;}
+	li.i-1{left:-260px; top:-39px;}
+	li.i-2{left:-212px; top:-130px;}
+	li.i-3{left:-162px; top:-60px;}
+	li.i-4{left:-102px; top:-130px;}
+	li.i-5{left:-40px; top:-70px;}
+	li.i-6{left:50px; top:-150px;}
+	li.i-7{left:70px; top:-25px;}
+	li.i-8{left:-260px; top:120px;}
+	li.i-9{left:-202px; top:185px;}
+	li.i-10{left:-124px; top:155px;}
+	li.i-11{left:-54px; top:130px;}
+	li.i-12{left:-0px; top:180px;}
+	li.i-13{left:70px; top:120px;}
+	.icons{top:262px;}
+	#chapter3-block li.i-1{top:-99px;}
+	#chapter3-block li.i-2{top:-170px;}
+	#chapter3-block li.i-7{left:90px;}
+	
+	.right-content .icons{margin-left:-162px !important;}
+	.icons li{-moz-background-size:34px auto; /* Firefox 3.6 */
+				background-size:34px auto; padding-top:37px;}
+	#chapter4-block .text-content{margin-top:80px;}
+	li.sequence{overflow:hidden;}
+}
+
+/* Style adjustments for Mobile */
+@media only screen and (max-width: 767px) {
+	.layout{width:440px;}
+	#header{height:133px;}
+	#news-bar{top:153px; background-image:none; line-height:15px; padding-bottom:10px; padding-top:7px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;}
+	
+	#main-menu{margin-top:84px; float:left;}
+	#main-menu li{padding:0 17px 0 0;}
+	#main-menu li.no-link a{padding-left:0; padding-right:0}
+	#logo{top:20px; left:10px;}
+	#chapter-nav{display:none;}
+	.text-content, .right-content .text-content{position:static !important; margin:0 auto !important; float:none; width:440px;}
+	#chapter1-block{margin-top:133px !important;}
+	
+	.sequence-block{float:none; margin: 0 auto; width:470px;}
+	li.sequence img{margin:0 !important; width:158%; }
+	
+	li.sequence, .chapter{min-height:420px !important;}
+	li.sequence{display:none !important;}
+	li.sequence:first-child{display:block !important;}
+	.icons{margin-left:-11px; top:281px;}
+	.right-content .icons{margin-left:-162px !important;}
+	.right-content .icons{margin-left:-19px !important;}
+	.icons{top:198px !important;}
+	.text-content, .right-content .text-content{overflow:hidden; padding-top:48px;}
+	#chapter1-block .text-content{padding-top:0;}
+	.map-block{margin-top:55px;}
+	
+	
+	
+	
+	#chapter6-block{margin-top:70px;}
+	.map-block{margin:50px 0 0 0; width:auto; background-size:100% auto; float:none; overflow:hidden;}
+	.map-block img{width:100%;}
+	#footer, #footer span{font-size:13px;}
+	#footer ul{float:none; width:auto; padding:0 50px;}
+	#footer ul li{background:none; }
+	#footer ul li:last-child{background:url(../images/divider.gif) no-repeat  0 50%;}
+	#news-bar a{width:93.5%;}
+	li.sequence{width:88%; margin-left:6%;}
+	.text-content{overflow:hidden;}
+	.heading-2{margin-top:50px;}
+	
+}
+
+/* Style adjustments for Mobile Portrate */
+@media only screen and (max-width : 479px) {
+	.layout, .sequence-block, .text-content, .right-content .text-content{width:300px;}
+	#main-menu li{padding-right:4px;}
+	#main-menu a{padding-left:9px; padding-right:9px; font-size:12px; }
+	li.sequence, .chapter{min-height:290px !important}
+	.heading-1{font-size:20px;}
+	.heading-2{font-size:17px;}
+	li.sequence{margin:0; width:100%;}
+	#news-bar a{font-size:11px;}
+	#news-bar{padding-top:3px; padding-bottom:3px;}
+	body, .text-content address{font-size:11px;}
+	.icons{top:139px !important;}
+	.right-content .icons{margin-left:-162px !important;}
+	.icons li{-moz-background-size:28px auto; /* Firefox 3.6 */
+				background-size:28px auto; padding-top:30px;}
+	#chapter4-block .text-content{margin-top:80px;}
+	.icons li span{font-size:10px;}
+	
+	li.i-1{left:-210px; top:-19px;}
+	li.i-2{left:-182px; top:-110px;}
+	li.i-3{left:-132px; top:-40px;}
+	li.i-4{left:-72px; top:-110px;}
+	li.i-5{left:-48px; top:-56px;}
+	li.i-6{left:4px; top:-130px;}
+	li.i-7{left:-3px; top:-5px;}
+	li.i-8{left:-186px; top:116px;}
+	li.i-9{left:-172px; top:165px;}
+	li.i-10{left:-103px; top:135px;}
+	li.i-11{left:-24px; top:110px;}
+	li.i-12{left:9px; top:160px;}
+	li.i-13{left:-83px; top:181px;}
+	
+	#chapter3-block li.i-7{left:20px; top:-100px;}
+	#chapter3-block li.i-6{left:-50px; top:-50px;}
+	#chapter3-block li.i-8{left:-40px; top:116px;}
+	#chapter3-block li.i-10{left:20px; top:135px;}
+	#chapter3-block li.i-11{left:140px; top:90px;}
+	#chapter3-block li.i-13{left:100px; top:150px;}
+	
+	#chapter4-block li.i-3{left:0px; top:-50px;}
+	#chapter4-block li.i-8{left:-40px; top:-10px;}
+	#chapter4-block li.i-10{left:-30px; top:130px;}
+	#chapter4-block li.i-11{left:100px; top:110px;}
+	
+	#chapter5-block li.i-4{left:20px; top:-80px;}
+	#chapter5-block li.i-5{left:-40px; top:-90px;}
+	#chapter5-block li.i-11{left:-30px; top:130px;}
+	#chapter5-block li.i-13{left:100px; top:110px;}
+	
+	#footer{margin-top:50px;}
+	.heading-2{margin-top:20px;}
+	li.sequence img{width:175%;}
+}
