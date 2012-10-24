@@ -1,26 +1,82 @@
+/*
+ * jQuery throttle / debounce - v1.1 - 3/7/2010
+ * http://benalman.com/projects/jquery-throttle-debounce-plugin/
+ *
+ * Copyright (c) 2010 "Cowboy" Ben Alman
+ * Dual licensed under the MIT and GPL licenses.
+ * http://benalman.com/about/license/
+ */
+(function(b,c){var $=b.jQuery||b.Cowboy||(b.Cowboy={}),a;$.throttle=a=function(e,f,j,i){var h,d=0;if(typeof f!=="boolean"){i=j;j=f;f=c}function g(){var o=this,m=+new Date()-d,n=arguments;function l(){d=+new Date();j.apply(o,n)}function k(){h=c}if(i&&!h){l()}h&&clearTimeout(h);if(i===c&&m>e){l()}else{if(f!==true){h=setTimeout(i?k:l,i===c?e-m:e)}}}if($.guid){g.guid=j.guid=j.guid||$.guid++}return g};$.debounce=function(d,e,f){return f===c?a(d,e,false):a(d,f,e!==false)}})(this);
+
 var Ipad_Iphon_Android = (navigator.userAgent.match(/Android/i))||(navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)) || (navigator.userAgent.match(/iPad/i))
 
 
-$(function () {
-    $('.icons').show();
+jQuery(function ($) {
+  // $('.icons').show();
 	if(Ipad_Iphon_Android){
-		$('.floating-arrow, .scroll-arrow').hide();
-		$('.icons').css({position:'absolute'});
-		$('.right-content .icons').show().css({marginLeft:'-250px'});
-		$('li.sequence').css('background-attachment','scroll');
-		$('li.sequence').css('min-height','485px');
-		$('.chapter').css('min-height','700px');
-		$('li.sequence img').show().css({float:'right', marginRight:'15px'});
-		$('.right-content li.sequence img').show().css({float:'left', marginRight:'0', marginLeft:'70px'});
-		$('.text-content').show().css({position:'absolute'});
-		$('.right-content .text-content').css({marginLeft:'60px'});
-		$('#chapter1-block li.sequence').css({border:'0px'});
-		$('#outer-header').css({position:'absolute'});
-		$('#chapter1-block').css({marginTop:'83px'});
-	}else{
+		// $('.floating-arrow, .scroll-arrow').hide();
+		// $('.icons').css({position:'absolute'});
+		// $('.right-content .icons').show().css({marginLeft:'-250px'});
+		// $('li.sequence').css('background-attachment','scroll');
+		// $('li.sequence').css('min-height','485px');
+		// $('.chapter').css('min-height','700px');
+		// $('li.sequence img').show().css({float:'right', marginRight:'15px'});
+		// $('.right-content li.sequence img').show().css({float:'left', marginRight:'0', marginLeft:'70px'});
+		// $('.text-content').show().css({position:'absolute'});
+		// $('.right-content .text-content').css({marginLeft:'60px'});
+		// $('#chapter1-block li.sequence').css({border:'0px'});
+		// $('#outer-header').css({position:'absolute'});
+		// $('#chapter1-block').css({marginTop:'83px'});
+	} else {
 
-    var $slideshowImages = $('li.sequence img');
-    $slideshowImages.filter(':first').show();
+    var $slideshowImages = $('#unbuild li img'),
+        $window = $(window),
+        increment = 150;
+
+    $slideshowImages
+      .addClass('hidden')
+      .css({ 'opacity': 0 });
+
+    var lastScrollTop = 0,
+        lastPhase = 0,
+        firstLoad = true;
+
+    // Wait for the document to load before calculating the window.height
+    window.setTimeout(function () {
+      var scrollTop = $window.scrollTop();
+      lastScrollTop = scrollTop;
+      lastPhase = Math.floor(scrollTop / increment);
+      scrollFadeOut();
+      $window.bind('scroll', $.throttle(150, true, scrollFadeOut));
+    }, 50);
+
+    function scrollFadeOut() {
+
+      var scrollTop = $window.scrollTop(),
+          direction = (lastScrollTop > scrollTop) ? 'up' : 'down',
+          phase = Math.floor(scrollTop / increment);
+
+      thisPhase = phase = (phase < 0) ? 0 : phase;
+
+      if (firstLoad === true) {
+        $('img#img-' + thisPhase).animate({ 'opacity' : 1 }, 150);
+        console.log($('img#img-' + thisPhase));
+      } else {
+        if (lastPhase !== phase) {
+          $slideshowImages.animate({ 'opacity': 0 }, 150);
+          if (direction === 'up') {
+            thisPhase = (phase > 1) ? (phase - 1) : 0;
+          }
+          $('img#img-' + thisPhase).animate({ 'opacity' : 1 }, 150);
+          lastScrollTop = scrollTop;
+          lastPhase = phase;
+        }
+      }
+      firstLoad = false;
+    }
+
+
+
 
 
 		// sequenceImages('li.sequence');
