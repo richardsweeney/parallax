@@ -13,55 +13,53 @@
  */
 (function(b,c){var $=b.jQuery||b.Cowboy||(b.Cowboy={}),a;$.throttle=a=function(e,f,j,i){var h,d=0;if(typeof f!=="boolean"){i=j;j=f;f=c}function g(){var o=this,m=+new Date()-d,n=arguments;function l(){d=+new Date();j.apply(o,n)}function k(){h=c}if(i&&!h){l()}h&&clearTimeout(h);if(i===c&&m>e){l()}else{if(f!==true){h=setTimeout(i?k:l,i===c?e-m:e)}}}if($.guid){g.guid=j.guid=j.guid||$.guid++}return g};$.debounce=function(d,e,f){return f===c?a(d,e,false):a(d,f,e!==false)}})(this);
 
-var mobile = (navigator.userAgent.match(/Android/i))||(navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)) || (navigator.userAgent.match(/iPad/i))
-
-$(function() {
-  // Maybe show a loader gif...
-});
+var mobile = (navigator.userAgent.match(/Android/i))||(navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)) || (navigator.userAgent.match(/iPad/i));
 
 $(window).load(function () {
-	if (mobile) {
-		// $('.floating-arrow, .scroll-arrow').hide();
-		// $('.icons').css({position:'absolute'});
-		// $('.right-content .icons').show().css({marginLeft:'-250px'});
-		// $('li.sequence').css('background-attachment','scroll');
-		// $('li.sequence').css('min-height','485px');
-		// $('.chapter').css('min-height','700px');
-		// $('li.sequence img').show().css({float:'right', marginRight:'15px'});
-		// $('.right-content li.sequence img').show().css({float:'left', marginRight:'0', marginLeft:'70px'});
-		// $('.text-content').show().css({position:'absolute'});
-		// $('.right-content .text-content').css({marginLeft:'60px'});
-		// $('#chapter1-block li.sequence').css({border:'0px'});
-		// $('#outer-header').css({position:'absolute'});
-		// $('#chapter1-block').css({marginTop:'83px'});
+  var $slideshowImages = $('#unbuild li img'),
+      $window = $(window),
+      $winHeight = $window.height(),
+      increment = 35,
+      throttle = 150,
+      $c1Text = $('#chapter1-text'),
+      $c2Text = $('#chapter2-text'),
+      $c3Text = $('#chapter3-text'),
+      $c4Text = $('#chapter4-text'),
+      $c5Text = $('#chapter5-text'),
+      $c6Text = $('#chapter6-text'),
+      $c2Icons = $('.chapter2-icons-container ul'),
+      $c3Icons = $('.chapter3-icons-container ul'),
+      $c1Content = $('#chapter1-text, #unbuild li img'),
+      $c2Content = $('#chapter2-text, .chapter2-icons-container ul').addClass('hide'),
+      $c3Content = $('#chapter3-text, #chapter3-image, .chapter3-icons-container ul').addClass('hide'),
+      $c4Content = $('#chapter4-text, #chapter4-image, .chapter4-icons-container ul').addClass('hide'),
+      $c5Content = $('#chapter5-text, #chapter5-image, .chapter5-icons-container ul').addClass('hide'),
+      $c6Content = $('#chapter6-text, #chapter6-map'),
+      allContent = [$c1Content, $c2Content, $c3Content, $c4Content, $c5Content, $c6Content],
+      allContentLength = allContent.length,
+      lastScrollTop = 0,
+      lastPhase = 0,
+      firstLoad = true,
+      scrollPhase = 1,
+      $scrollArrow = $('.scroll-arrow'),
+      $lastPall = $('img#img-16'),
+      $chapterNavLi = $('ul#chapter-nav li a'),
+      lastChapter = 1,
+      chapterTwoBegins = 600;
+
+	if (mobile || $window.outerWidth() <= 770) {
+    $('.hide').removeClass('hide').addClass('show').show();
+    // $('#main-menu ul').onePageNav();
+    var $icons = $('.icons li.unique').clone(),
+        $mobileIconList = $('<ul id="mobile-icons-list" />');
+
+    $.each($icons.add('h1, h2'), function (i) {
+      // Remove all the <br> tags
+      $(this).find('br').replaceWith('&nbsp;');
+    });
+    $mobileIconList.append($icons).appendTo($('#chapter2-block'));
+
 	} else {
-
-    var $slideshowImages = $('#unbuild li img'),
-        $window = $(window),
-        $winHeight = $window.height(),
-        increment = 50,
-        throttle = 150,
-        $c1Text = $('#chapter1-text'),
-        $c2Text = $('#chapter2-text'),
-        $c3Text = $('#chapter3-text'),
-        $c2Icons = $('.chapter2-icons-container ul'),
-        $c3Icons = $('.chapter3-icons-container ul'),
-        $c1Content = $('#chapter1-text, #unbuild li img'),
-        $c2Content = $('#chapter2-text, .chapter2-icons-container ul').addClass('hide'),
-        $c3Content = $('#chapter3-text, #chapter3-image, .chapter3-icons-container ul').addClass('hide'),
-        $c4Content = $('#chapter4-text, #chapter4-image, .chapter4-icons-container ul').addClass('hide'),
-        $c5Content = $('#chapter5-text, #chapter5-image, .chapter5-icons-container ul').addClass('hide'),
-        $c6Content = $('#chapter6-text, #chapter6-map'),
-        allContent = [$c1Content, $c2Content, $c3Content, $c4Content, $c5Content, $c6Content],
-        allContentLength = allContent.length,
-        lastScrollTop = 0,
-        lastPhase = 0,
-        firstLoad = true,
-        scrollPhase = 1,
-        $scrollArrow = $('.scroll-arrow'),
-        $lastPall = $('img#img-16'),
-        $chapterNavLi = $('ul#chapter-nav li a');
-
     // Wait for the document to load before calculating the window.height
     var timeout = window.setTimeout(function () {
       var scrollTop = lastScrollTop = $window.scrollTop();
@@ -70,30 +68,37 @@ $(window).load(function () {
       $window.bind('scroll', $.throttle(throttle, true, scrollFadeOutFirstPhase));
     }, 50);
 
+
+    if (Modernizr.csstransitions === false) {
+      $('.hide').hide();
+    }
+
     function scrollFadeOutFirstPhase() {
       var scrollTop = $window.scrollTop(),
           direction = (lastScrollTop > scrollTop) ? 'up' : 'down',
           phase = Math.floor(scrollTop / increment);
 
-      // Clear the timer
-      window.clearTimeout(timeout);
-      if (scrollTop < 850) {
+      if (scrollTop < chapterTwoBegins) {
         $.each($chapterNavLi, function () {
           $(this).parent().removeClass('current');
         });
         $chapterNavLi.eq(0).parent().addClass('current');
-        scrollPhase = 1;
-        if (Modernizr.csstransitions === true) {
-          $scrollArrow.show();
-          $c1Text.removeClass('hide').addClass('show');
-          $c2Content.add($c3Content).add($c4Content).add($c5Content).removeClass('show').addClass('hide');
-        } else {
+        scrollPhase = lastChapter = 1;
+        $scrollArrow.show();
+        $c2Content.add($c3Content).add($c4Content).add($c5Content).removeClass('show').addClass('hide');
+        $c2Text.add($c3Text).add($c4Text).add($c5Text).animate({ 'opacity': 0 }, 100);
+        $c1Text.removeClass('hide').addClass('show').animate({ 'opacity' : 1, 'top': 150 }, 400);
+        if (Modernizr.csstransitions === false) {
+          $c2Content.add($c3Content).add($c4Content).add($c5Content).hide();
           $c1Text.show();
-          $c2Icons.add($c2Text).removeClass('show').addClass('hide');
+          $c2Icons.add($c2Text).hide();
         }
         thisPhase = phase = (phase < 0) ? 0 : phase;
         if (firstLoad === true) {
           $('img#img-' + thisPhase).removeClass('hide').addClass('show');
+          if (Modernizr.csstransitions === false) {
+            $('img#img-' + thisPhase).fadeIn(300);
+          }
         } else {
           if (lastPhase !== phase) {
             $slideshowImages.removeClass('show').addClass('hide');
@@ -101,26 +106,43 @@ $(window).load(function () {
               thisPhase = (phase > 1) ? (phase - 1) : 0;
             }
             $('img#img-' + thisPhase).removeClass('hide').addClass('show');
+            if (Modernizr.csstransitions === false) {
+              $slideshowImages.hide();
+              $('img#img-' + thisPhase).show();
+            }
             lastScrollTop = scrollTop;
             lastPhase = phase;
           }
         }
       } else {
         $slideshowImages.removeClass('show').addClass('hide');
+        if (Modernizr.csstransitions === false) {
+          $slideshowImages.hide();
+        }
         $scrollArrow.hide();
         var chapter;
-        if (scrollTop > 850 && scrollTop < 1200) {
+        if (scrollTop >= chapterTwoBegins && scrollTop < 920) {
           chapter = 2;
-        } else if (scrollTop > 1200 && scrollTop < 1550) {
+        } else if (scrollTop > 920 && scrollTop < 1220) {
           chapter = 3;
-        } else if (scrollTop > 1550 && scrollTop < 1900) {
+        } else if (scrollTop > 1220 && scrollTop < 1520) {
           chapter = 4;
-        } else if (scrollTop > 1900 && scrollTop < 2250) {
+        } else if (scrollTop > 1520 && scrollTop < 1820) {
           chapter = 5;
-        } else if (scrollTop > 2250) {
+        } else if (scrollTop > 1820) {
           chapter = 6;
         }
-        scrollFadeOutNextPhase(chapter, scrollTop);
+        if (chapter === 2 ) {
+          $lastPall.addClass('show').removeClass('hide');
+          if (Modernizr.csstransitions === false) {
+            $lastPall.show();
+          }
+        }
+
+        if (chapter != lastChapter) {
+          scrollFadeOutNextPhase(chapter, scrollTop);
+        }
+        lastChapter = chapter;
       }
       firstLoad = false;
     }
@@ -131,17 +153,39 @@ $(window).load(function () {
       });
       $chapterNavLi.eq(chapter - 1).parent().addClass('current');
       for (var i = 0; i < allContentLength; i++) {
-        if (Modernizr.csstransitions === true) {
-          if (chapter === i + 1) {
-            allContent[i].removeClass('hide').addClass('show');
-          } else {
-            allContent[i].removeClass('show').addClass('hide');
+
+        // Non zero based counter
+        var j = i + 1,
+            $text = $('#chapter' + j + '-text');
+
+        if (chapter === j) {
+          var topPosition = 200;
+          if (j === 4) {
+            topPosition = 270;
+          } else if (j === 5) {
+            topPosition = 250;
+          }
+
+          // allContent[i].removeClass('hide').addClass('show');
+          $('#chapter' + j + '-image, .chapter' + j + '-icons-container ul').removeClass('hide').addClass('show');
+          $text
+            .removeClass('hide')
+            .addClass('show')
+            .css({ 'top': 1500, 'opacity': 0 })
+            .delay(500)
+            .animate({ 'top': topPosition, 'opacity': 1 }, 500);
+          if (Modernizr.csstransitions === false) {
+            $('#chapter' + j + '-image, .chapter' + j + '-icons-container ul').hide().fadeIn('slow');
+            $text.show();
+          }
+        } else {
+          $('#chapter' + j + '-image, .chapter' + j + '-icons-container ul').removeClass('show').addClass('hide');
+          $text.removeClass('show').addClass('hide').stop(true, true).animate({ 'top': -500, 'opacity': 0 }, 300);
+          if (Modernizr.csstransitions === false) {
+            $('#chapter' + j + '-image, .chapter' + j + '-icons-container ul').fadeOut('show');
+            $text.hide();
           }
         }
-        // Add support for non css3 browsers
-      }
-      if (chapter === 2 ) {
-        $('img#img-16').addClass('show').removeClass('hide');
       }
     }
 
