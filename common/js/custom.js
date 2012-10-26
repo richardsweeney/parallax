@@ -13,12 +13,14 @@
  */
 (function(b,c){var $=b.jQuery||b.Cowboy||(b.Cowboy={}),a;$.throttle=a=function(e,f,j,i){var h,d=0;if(typeof f!=="boolean"){i=j;j=f;f=c}function g(){var o=this,m=+new Date()-d,n=arguments;function l(){d=+new Date();j.apply(o,n)}function k(){h=c}if(i&&!h){l()}h&&clearTimeout(h);if(i===c&&m>e){l()}else{if(f!==true){h=setTimeout(i?k:l,i===c?e-m:e)}}}if($.guid){g.guid=j.guid=j.guid||$.guid++}return g};$.debounce=function(d,e,f){return f===c?a(d,e,false):a(d,f,e!==false)}})(this);
 
-var Ipad_Iphon_Android = (navigator.userAgent.match(/Android/i))||(navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)) || (navigator.userAgent.match(/iPad/i))
+var mobile = (navigator.userAgent.match(/Android/i))||(navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)) || (navigator.userAgent.match(/iPad/i))
 
+$(function() {
+  // Maybe show a loader gif...
+});
 
-jQuery(function ($) {
-  // $('.icons').show();
-	if(Ipad_Iphon_Android){
+$(window).load(function () {
+	if (mobile) {
 		// $('.floating-arrow, .scroll-arrow').hide();
 		// $('.icons').css({position:'absolute'});
 		// $('.right-content .icons').show().css({marginLeft:'-250px'});
@@ -36,22 +38,32 @@ jQuery(function ($) {
 
     var $slideshowImages = $('#unbuild li img'),
         $window = $(window),
+        $winHeight = $window.height(),
         increment = 50,
         throttle = 150,
-        $cText = $('#chapter2-text'),
-        $cIcons = $('.chapter2-icons'),
+        $c1Text = $('#chapter1-text'),
+        $c2Text = $('#chapter2-text'),
+        $c3Text = $('#chapter3-text'),
+        $c2Icons = $('.chapter2-icons-container ul'),
+        $c3Icons = $('.chapter3-icons-container ul'),
+        $c1Content = $('#chapter1-text, #unbuild li img'),
+        $c2Content = $('#chapter2-text, .chapter2-icons-container ul').addClass('hide'),
+        $c3Content = $('#chapter3-text, #chapter3-image, .chapter3-icons-container ul').addClass('hide'),
+        $c4Content = $('#chapter4-text, #chapter4-image, .chapter4-icons-container ul').addClass('hide'),
+        $c5Content = $('#chapter5-text, #chapter5-image, .chapter5-icons-container ul').addClass('hide'),
+        $c6Content = $('#chapter6-text, #chapter6-map'),
+        allContent = [$c1Content, $c2Content, $c3Content, $c4Content, $c5Content, $c6Content],
+        allContentLength = allContent.length,
         lastScrollTop = 0,
         lastPhase = 0,
         firstLoad = true,
-        $iconsList = $('.icons-container ul'),
-        scrollPhase = 1;
-
-    $slideshowImages
-      .addClass('hidden')
-      .hide();
+        scrollPhase = 1,
+        $scrollArrow = $('.scroll-arrow'),
+        $lastPall = $('img#img-16'),
+        $chapterNavLi = $('ul#chapter-nav li a');
 
     // Wait for the document to load before calculating the window.height
-    window.setTimeout(function () {
+    var timeout = window.setTimeout(function () {
       var scrollTop = lastScrollTop = $window.scrollTop();
       lastPhase = Math.floor(scrollTop / increment);
       scrollFadeOutFirstPhase();
@@ -63,82 +75,94 @@ jQuery(function ($) {
           direction = (lastScrollTop > scrollTop) ? 'up' : 'down',
           phase = Math.floor(scrollTop / increment);
 
-      if(scrollTop < 850) {
+      // Clear the timer
+      window.clearTimeout(timeout);
+      if (scrollTop < 850) {
+        $.each($chapterNavLi, function () {
+          $(this).parent().removeClass('current');
+        });
+        $chapterNavLi.eq(0).parent().addClass('current');
         scrollPhase = 1;
         if (Modernizr.csstransitions === true) {
-          $iconsList.removeClass('show').addClass('hide');
-          $cText.removeClass('show').addClass('hide');
+          $scrollArrow.show();
+          $c1Text.removeClass('hide').addClass('show');
+          $c2Content.add($c3Content).add($c4Content).add($c5Content).removeClass('show').addClass('hide');
         } else {
-          $iconsList.add($cText).removeClass('show').addClass('hide').animate({ 'opacity': 0 }, 400);
+          $c1Text.show();
+          $c2Icons.add($c2Text).removeClass('show').addClass('hide');
         }
-        $cText.animate({ 'opacity': 0 }, 200);
-        $cIcons.animate({ 'opacity': 0 }, 200);
-        $('#chapter1-text').show();
         thisPhase = phase = (phase < 0) ? 0 : phase;
         if (firstLoad === true) {
-          $('img#img-' + thisPhase).show();
+          $('img#img-' + thisPhase).removeClass('hide').addClass('show');
         } else {
           if (lastPhase !== phase) {
-            $slideshowImages.hide();
+            $slideshowImages.removeClass('show').addClass('hide');
             if (direction === 'up') {
               thisPhase = (phase > 1) ? (phase - 1) : 0;
             }
-            $('img#img-' + thisPhase).show();
+            $('img#img-' + thisPhase).removeClass('hide').addClass('show');
             lastScrollTop = scrollTop;
             lastPhase = phase;
           }
         }
-        firstLoad = false;
       } else {
-        scrollFadeOutSecondPhase(scrollTop, phase);
-        scrollPhase = 2;
+        $slideshowImages.removeClass('show').addClass('hide');
+        $scrollArrow.hide();
+        var chapter;
+        if (scrollTop > 850 && scrollTop < 1200) {
+          chapter = 2;
+        } else if (scrollTop > 1200 && scrollTop < 1550) {
+          chapter = 3;
+        } else if (scrollTop > 1550 && scrollTop < 1900) {
+          chapter = 4;
+        } else if (scrollTop > 1900 && scrollTop < 2250) {
+          chapter = 5;
+        } else if (scrollTop > 2250) {
+          chapter = 6;
+        }
+        scrollFadeOutNextPhase(chapter, scrollTop);
+      }
+      firstLoad = false;
+    }
+
+    function scrollFadeOutNextPhase(chapter, scrollTop) {
+      $.each($chapterNavLi, function () {
+        $(this).parent().removeClass('current');
+      });
+      $chapterNavLi.eq(chapter - 1).parent().addClass('current');
+      for (var i = 0; i < allContentLength; i++) {
+        if (Modernizr.csstransitions === true) {
+          if (chapter === i + 1) {
+            allContent[i].removeClass('hide').addClass('show');
+          } else {
+            allContent[i].removeClass('show').addClass('hide');
+          }
+        }
+        // Add support for non css3 browsers
+      }
+      if (chapter === 2 ) {
+        $('img#img-16').addClass('show').removeClass('hide');
       }
     }
 
-
-    function scrollFadeOutSecondPhase(scrollTop, phase) {
-      $('img#img-16').show();
-      $('#chapter1-text').fadeOut();
-      $('.scroll-arrow').hide();
-      if (Modernizr.csstransitions === true) {
-        $iconsList.removeClass('hide').addClass('show');
-        $cText.removeClass('hide').addClass('show');
-      } else {
-        $iconsList.removeClass('hide').addClass('show').animate({ 'opacity': 1, 'top': 300 }, 600, function() {
-          $cText.removeClass('hide').addClass('show').animate({ 'opacity': 1 }, 400);
-        });
-      }
-    }
-
-
-
-		// sequenceImages('li.sequence');
-		// floatingArrow();
-
-		// var lastSequencePos = $('#chapter3-block li.sequence').offset().top;
-		// var $currentChapter = $("#"+$('.chapter:in-viewport').attr('id'));
-		// 	$('.text-content, .icons').stop().fadeTo(100,0);
-		// 	$currentChapter.find('.text-content, .icons').stop().fadeTo(500,1);
-		// 	$(window).scroll(function(){
-		// 	/////
-		// 	var $currentChapter = $("#"+$('.chapter:in-viewport').attr('id'));
-		// 	$('.text-content, .icons').stop().fadeTo(100,0);
-		// 	$currentChapter.find('.text-content, .icons').stop().fadeTo(500,1);
-		// 	////
-		// 	var windowScrollTop = $(window).scrollTop();
-		// 	if(windowScrollTop > lastSequencePos-1150){
-		// 		$('.scroll-arrow').fadeOut();
-		// 		$('li.sequence').css('background-position','50% 0px');
-		// 		$('li.sequence').css('background-attachment','scroll');
-		// 	}else{
-		// 		$('.scroll-arrow').fadeIn();
-		// 		$('li.sequence').css('background-position','50% 83px');
-		// 		$('li.sequence').css('background-attachment','fixed');
-		// 	}
-		// });
-
-
+    $chapterNavLi.click(function () {
+      $window.unbind('scroll', scrollFadeOutFirstPhase);
+      var depth = +$(this).parent().attr('data-depth');
+      $("html, body").animate({ scrollTop: depth }, 300, function () {
+        $window.bind('scroll', $.throttle(throttle, true, scrollFadeOutFirstPhase)).trigger('scroll');
+        if (depth === 0) {
+          $slideshowImages.removeClass('show').addClass('hide');
+          $('img#img-0').removeClass('hide').addClass('show');
+        }
+      });
+      return false;
+    });
 	}
+
+});
+
+
+  // floatingArrow();
 
 
 
@@ -156,7 +180,7 @@ jQuery(function ($) {
 	// $('body').scrollTo( '#chapter1', 800 );
 	// return false;
  //  });
-});
+
 //Sequence Images to Background
 // function sequenceImages(list){
 //     var $windowHight = $(window).height();
@@ -173,6 +197,8 @@ jQuery(function ($) {
 // 		}
 //     });
 // }
+
+
 // function floatingArrow(){
 //     var offset = $('.floating-arrow').offset();
 //     var lastSequencePos = $('li.sequence:last').offset().top;
