@@ -15,12 +15,31 @@
 
 var mobile = (navigator.userAgent.match(/Android/i))||(navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)) || (navigator.userAgent.match(/iPad/i));
 
+if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+
+}
+
+$(function () {
+  if (Modernizr.csstransitions === false) {
+    $('.hide').hide();
+  }
+  if (mobile === true || $(window).width() < 940) {
+    $('#chapter1-text').addClass('loaded');
+    var $mainMenu = $('#main-menu').hide();
+    $('#mobile-nav-trigger').click(function() {
+      $mainMenu.slideToggle();
+    });
+  }
+  $('#chapter6-map').hide();
+});
+
 $(window).load(function () {
-  var $slideshowImages = $('#unbuild li img'),
-      $window = $(window),
+  var $window = $(window),
       $winHeight = $window.height(),
       increment = 35,
       throttle = 150,
+      $parallaxImageContainer = $('#unbuild'),
+      $slideshowImages,
       $c1Text = $('#chapter1-text'),
       $c2Text = $('#chapter2-text'),
       $c3Text = $('#chapter3-text'),
@@ -42,36 +61,49 @@ $(window).load(function () {
       firstLoad = true,
       scrollPhase = 1,
       $scrollArrow = $('.scroll-arrow'),
-      $lastPall = $('img#img-16'),
       $chapterNavLi = $('ul#chapter-nav li a'),
+      $lastPall,
       lastChapter = 1,
-      chapterTwoBegins = 600;
+      chapterTwoBegins = 600,
+      $mapCanvas = $('#chapter6-map'),
+      iFrameLoaded = false,
+      iFrame = '<iframe id="maps-iframe" width="450" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=Sj%C3%B6viksv%C3%A4gen+2+231+62+Trelleborg&amp;aq=&amp;sll=37.0625,-95.677068&amp;sspn=48.50801,57.919922&amp;ie=UTF8&amp;hq=&amp;hnear=Sj%C3%B6viksv%C3%A4gen+2,+231+62+Trelleborg,+Sweden&amp;ll=55.379552,13.123617&amp;spn=0.008558,0.02105&amp;t=m&amp;z=14&amp;output=embed"></iframe>';
 
-	if (mobile || $window.outerWidth() <= 770) {
+	if (mobile || $window.outerWidth() < 940) {
     $('.hide').removeClass('hide').addClass('show').show();
-    // $('#main-menu ul').onePageNav();
+
     var $icons = $('.icons li.unique').clone(),
         $mobileIconList = $('<ul id="mobile-icons-list" />');
 
+    // Remove all the <br> tags
     $.each($icons.add('h1, h2'), function (i) {
-      // Remove all the <br> tags
       $(this).find('br').replaceWith('&nbsp;');
     });
+
     $mobileIconList.append($icons).appendTo($('#chapter2-block'));
-
+    $mapCanvas.append(iFrame).fadeIn(300);
 	} else {
-    // Wait for the document to load before calculating the window.height
-    var timeout = window.setTimeout(function () {
-      var scrollTop = lastScrollTop = $window.scrollTop();
-      lastPhase = Math.floor(scrollTop / increment);
-      scrollFadeOutFirstPhase();
-      $window.bind('scroll', $.throttle(throttle, true, scrollFadeOutFirstPhase));
-    }, 50);
 
-
-    if (Modernizr.csstransitions === false) {
-      $('.hide').hide();
-    }
+    /** If we're not mobile, get all the other images needed for the Parallax stuff */
+    (function getParallaxImages() {
+      var i;
+      // Start the counter from one to make life easier
+      for (i = 1; i < 18; i++) {
+        var imgNo = (i < 10) ? '0' + i : i,
+            $li = $('<li><img class="sequence-img hide" id="img-' + i + '" src="images/' + imgNo + '.jpg" /></li>');
+        $parallaxImageContainer.append($li);
+        if (i === 17) {
+          $lastPall = $('#img-17').load( function () {
+            $c1Text.addClass('loaded');
+            var scrollTop = lastScrollTop = $window.scrollTop();
+            lastPhase = Math.floor(scrollTop / increment);
+            scrollFadeOutFirstPhase();
+            $window.bind('scroll', $.throttle(throttle, true, scrollFadeOutFirstPhase));
+          });
+        }
+      }
+      $slideshowImages = $('#unbuild li img');
+    }());
 
     function scrollFadeOutFirstPhase() {
       var scrollTop = $window.scrollTop(),
@@ -82,14 +114,15 @@ $(window).load(function () {
         $.each($chapterNavLi, function () {
           $(this).parent().removeClass('current');
         });
+        $mapCanvas.hide();
         $chapterNavLi.eq(0).parent().addClass('current');
         scrollPhase = lastChapter = 1;
         $scrollArrow.show();
-        $c2Content.add($c3Content).add($c4Content).add($c5Content).removeClass('show').addClass('hide');
-        $c2Text.add($c3Text).add($c4Text).add($c5Text).animate({ 'opacity': 0 }, 100);
+        $c2Content.add($c3Content).add($c4Content).add($c5Content).add($c6Content).removeClass('show').addClass('hide');
+        $c2Text.add($c3Text).add($c4Text).add($c5Text).add($c6Text).animate({ 'opacity': 0 }, 100);
         $c1Text.removeClass('hide').addClass('show').animate({ 'opacity' : 1, 'top': 150 }, 400);
         if (Modernizr.csstransitions === false) {
-          $c2Content.add($c3Content).add($c4Content).add($c5Content).hide();
+          $c2Content.add($c3Content).add($c4Content).add($c5Content).add($c6Content).hide();
           $c1Text.show();
           $c2Icons.add($c2Text).hide();
         }
@@ -164,16 +197,32 @@ $(window).load(function () {
             topPosition = 270;
           } else if (j === 5) {
             topPosition = 250;
+          } else if (j === 5) {
+            $mapCanvas.fadeOut(200);
           }
 
           // allContent[i].removeClass('hide').addClass('show');
           $('#chapter' + j + '-image, .chapter' + j + '-icons-container ul').removeClass('hide').addClass('show');
-          $text
-            .removeClass('hide')
-            .addClass('show')
-            .css({ 'top': 1500, 'opacity': 0 })
-            .delay(500)
-            .animate({ 'top': topPosition, 'opacity': 1 }, 500);
+          if (j === 6) {
+            $text
+              .removeClass('hide')
+              .addClass('show')
+              .css({ 'top': 1500, 'opacity': 0 })
+              .animate({ 'top': topPosition, 'opacity': 1 }, 500);
+            if (iFrameLoaded === false) {
+              $mapCanvas.append(iFrame).fadeIn(300);
+              iFrameLoaded = true;
+            } else {
+              $mapCanvas.fadeIn();
+            }
+          } else {
+            $text
+              .removeClass('hide')
+              .addClass('show')
+              .css({ 'top': 1500, 'opacity': 0 })
+              .delay(500)
+              .animate({ 'top': topPosition, 'opacity': 1 }, 500);
+            }
           if (Modernizr.csstransitions === false) {
             $('#chapter' + j + '-image, .chapter' + j + '-icons-container ul').hide().fadeIn('slow');
             $text.show();
@@ -181,6 +230,7 @@ $(window).load(function () {
         } else {
           $('#chapter' + j + '-image, .chapter' + j + '-icons-container ul').removeClass('show').addClass('hide');
           $text.removeClass('show').addClass('hide').stop(true, true).animate({ 'top': -500, 'opacity': 0 }, 300);
+          $mapCanvas.fadeOut();
           if (Modernizr.csstransitions === false) {
             $('#chapter' + j + '-image, .chapter' + j + '-icons-container ul').fadeOut('show');
             $text.hide();
@@ -204,61 +254,3 @@ $(window).load(function () {
 	}
 
 });
-
-
-  // floatingArrow();
-
-
-
-	//One Page Navigaion
-	// $('.meun').onePageNav({
- //    begin: function() {
-	//   console.log('start')
- //    },
- //    end: function() {
-	//   console.log('stop')
- //    }
- //  });
- //  //
- //  $('.floating-arrow, #logo').click(function(){
-	// $('body').scrollTo( '#chapter1', 800 );
-	// return false;
- //  });
-
-//Sequence Images to Background
-// function sequenceImages(list){
-//     var $windowHight = $(window).height();
-//     $(list).each(function(){
-//         var imagePath = $(this).find('img').attr('src');
-//         $(this).css({
-//             backgroundImage:'url('+imagePath+')',
-//             height:$windowHight
-//         });
-// 		if($windowHight<550){
-// 			$(this).css({
-// 				height:'600px'
-// 			});
-// 		}
-//     });
-// }
-
-
-// function floatingArrow(){
-//     var offset = $('.floating-arrow').offset();
-//     var lastSequencePos = $('li.sequence:last').offset().top;
-//     var topPadding = 15;
-//     $(window).scroll(function(){
-//         if($(window).scrollTop() > (lastSequencePos)-200){
-//             $('.floating-arrow').stop().animate({
-//                 marginTop: $(window).scrollTop() - offset.top + $(window).height() - 100
-//             });
-//         }else{
-//             $('.chapter1-text').stop().animate(function(){
-//                 marginTop: 0
-//             });
-//         }
-//     });
-// }
-
-
-
